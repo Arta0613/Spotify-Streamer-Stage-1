@@ -20,6 +20,7 @@ import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.ArtistsPager;
+import retrofit.RetrofitError;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!(count == 0) && mArtistsPager == null)
+                if (!(count == 0))
                     new SearchArtists().execute(s.toString());
             }
 
@@ -109,7 +110,13 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected ArtistsPager doInBackground(String... params) {
-            return spotify.searchArtists(params[0]);
+            ArtistsPager results = null;
+            try {
+                results = spotify.searchArtists(params[0]);
+            } catch (RetrofitError e) {
+                e.printStackTrace();
+            }
+            return results;
         }
 
         @Override
